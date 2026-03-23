@@ -1,0 +1,36 @@
+name: "artifact-deploy"
+description: "Deploy selected files (artifacts) to another GitHub repository"
+
+author: "yukiakai212"
+
+inputs:
+  repo:
+    description: "Target repository (user/repo)"
+    required: true
+
+  branch:
+    description: "Target branch"
+    required: false
+    default: "main"
+
+  token:
+    description: "GitHub token (PAT recommended)"
+    required: true
+
+  base-dir:
+    description: "Base directory for resolving files"
+    required: false
+    default: "."
+
+  files:
+    description: "Glob patterns (multiline supported)"
+    required: true
+
+  commit-message:
+    description: "Commit message"
+    required: false
+    default: "deploy: update artifacts"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
