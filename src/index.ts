@@ -12,7 +12,9 @@ async function run() {
     const token = core.getInput('token', { required: true });
     let baseDir = core.getInput('base-dir') || '.';
     const filesInput = core.getInput('files', { required: true });
-
+    const sha = process.env.GITHUB_SHA?.slice(0, 7);
+    const defaultMessage = sha ? `deploy: ${sha}` : 'deploy: update artifacts';
+    const commitMessage = core.getInput('commit-message') || defaultMessage;
     baseDir = path.resolve(baseDir);
 
     const patterns = filesInput
@@ -88,12 +90,12 @@ async function run() {
     }
 
     // 9. Commit
-    await exec.exec('git', ['commit', '-m', 'deploy: update artifacts'], { cwd: tmpDir });
+    await exec.exec('git', ['commit', '-m', commitMessage], { cwd: tmpDir });
 
     // 10. Push (NO FORCE)
     await exec.exec('git', ['push', 'origin', branch], { cwd: tmpDir });
 
-    core.info('Deploy success 🚀');
+    core.info('Deploy success');
   } catch (err: any) {
     core.setFailed(err.message);
   }

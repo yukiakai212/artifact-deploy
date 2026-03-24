@@ -4,18 +4,16 @@
 
 ---
 
-## ✨ Features
+## Features
 
-* 📦 Deploy only specific files using glob patterns
-* 🧹 Clean target repository before each deploy
-* 🧠 Monorepo-friendly with `base-dir`
-* 📜 Preserve git history (no force push by default)
-* 🚀 Fast with shallow clone
-* 🛠 Custom commit message support
+* Deploy only specific files using glob patterns
+* Monorepo-friendly with `base-dir`
+* Fast with shallow clone
+* Custom commit message support
 
 ---
 
-## 🚀 Use Case
+## Use Case
 
 * Publish `dist/` without exposing source code
 * Deploy build artifacts to a separate repo
@@ -24,7 +22,7 @@
 
 ---
 
-## 📦 Usage
+## Usage
 
 ```yaml
 name: Deploy
@@ -44,7 +42,7 @@ jobs:
         run: npm run build
 
       - name: Deploy artifacts
-        uses: your-username/artifact-deploy@v1
+        uses: yukiakai212/artifact-deploy@v1
         with:
           repo: your-username/target-repo
           token: ${{ secrets.GH_PAT }}
@@ -59,7 +57,7 @@ jobs:
 
 ---
 
-## ⚙️ Inputs
+## Inputs
 
 | Name             | Required | Default                    | Description                         |
 | ---------------- | -------- | -------------------------- | ----------------------------------- |
@@ -72,7 +70,7 @@ jobs:
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
 1. Clone target repository (shallow)
 2. Remove all tracked files (`git rm -rf .`)
@@ -82,7 +80,7 @@ jobs:
 
 ---
 
-## 📁 Path Behavior (Monorepo Friendly)
+## Path Behavior (Monorepo Friendly)
 
 ```yaml
 base-dir: ./packages/app
@@ -104,17 +102,10 @@ dist/index.js
 
 > `base-dir` is stripped automatically.
 
----
-
-## ⚠️ Notes
-
-* `.git` directory is preserved to keep commit history
-* If no files change, no commit will be created
-* Target repo will always reflect the latest snapshot
 
 ---
 
-## 🔐 Authentication
+## Authentication
 
 Use a Personal Access Token (PAT):
 
@@ -126,7 +117,7 @@ Make sure it has `repo` permissions.
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
 ### Use meaningful commit messages
 
@@ -144,6 +135,6 @@ commit-message: |
 
 ---
 
-## 📜 License
+## License
 
-MIT
+Yuki Akai - MIT

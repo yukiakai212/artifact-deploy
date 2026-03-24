@@ -16,4 +16,5 @@ export default defineConfig({
   drop: 'console',
   define: {},
   external: [],
+  noExternal: ['@actions/core', '@actions/exec', 'fast-glob', 'fs-extra'],
 });

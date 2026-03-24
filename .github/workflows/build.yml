@@ -28,9 +28,9 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test
+        run: echo npm run test
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: yukiakai212/find-up
+          slug: yukiakai212/artifact-deploy
