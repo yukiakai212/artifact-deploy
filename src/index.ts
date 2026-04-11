@@ -48,7 +48,7 @@ async function run() {
     const remote = `https://x-access-token:${token}@github.com/${repo}.git`;
 
     // 3. Clone repo (shallow)
-    await exec.exec('git', ['clone', '--depth=1', '--branch', branch, remote, tmpDir]);
+    await cloneRepo(remote, branch, tmpDir);
 
     // 4. Wipe tracked files (keep .git)
     try {
@@ -98,6 +98,18 @@ async function run() {
     core.info('Deploy success');
   } catch (err: any) {
     core.setFailed(err.message);
+  }
+}
+
+async function cloneRepo(remote: string, branch: string, tmpDir: string) {
+  try {
+    await exec.exec('git', ['clone', '--depth=1', '--branch', branch, remote, tmpDir]);
+  } catch (err) {
+    // fallback: clone không branch
+    await exec.exec('git', ['clone', remote, tmpDir]);
+
+    // tạo branch mới
+    await exec.exec('git', ['-C', tmpDir, 'checkout', '-b', branch]);
   }
 }
 
