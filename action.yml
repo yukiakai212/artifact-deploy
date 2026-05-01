@@ -21,6 +21,10 @@ inputs:
     description: "Base directory for resolving files"
     required: false
     default: "."
+  target-dir:
+    description: "Target directory in destination  repo"
+    required: false
+    default: "."
 
   files:
     description: "Glob patterns (multiline supported)"
