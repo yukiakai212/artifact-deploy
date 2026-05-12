@@ -20,7 +20,7 @@
     "CHANGELOG.md"
   ],
   "keywords": [
-	"artifact-deploy"
+    "artifact-deploy"
   ],
   "author": "Yuki_akai",
   "homepage": "https://github.com/yukiakai212/artifact-deploy",
@@ -63,6 +63,7 @@
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@actions/exec": "^3.0.0",
+    "@yukiakai/actions-git": "^1.0.2",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.4"
   }

@@ -1,3 +1,5 @@
+import { GitClient } from '@yukiakai/actions-git';
+
 interface GitOptions {
     cwd: string;
     repo: string;
@@ -11,15 +13,16 @@ interface FileCopierOptions {
 interface DeployOptions {
     token: string;
     branch: string;
-    workingDir: string;
+    workspaceDir: string;
     targetRepo: string;
-    srcDir: string;
-    destDir: string;
 }
 interface DeployContext {
     patterns: string[];
     ignore: string[];
     commitMessage: string;
+    srcDir: string;
+    destDir: string;
+    relativeTargetDir: string;
 }
 interface RunOptions {
     repo: string;
@@ -29,22 +32,6 @@ interface RunOptions {
     targetDir: string;
     files: string[];
     commitMessage: string;
-}
-
-declare class GitClient {
-    private options;
-    constructor(options: GitOptions);
-    private get repoUrl();
-    private execGit;
-    clone(): Promise<void>;
-    setup(): Promise<void>;
-    wipe(): Promise<void>;
-    checkout(): Promise<void>;
-    commit(message: string): Promise<void>;
-    add(pattern: string): Promise<void>;
-    push(): Promise<void>;
-    hasChanges(): Promise<boolean>;
-    private branchExists;
 }
 
 declare class FileResolver {
@@ -60,11 +47,19 @@ declare class FileCopier {
     copy(files: string[]): Promise<void>;
 }
 
+interface DeployServices {
+    resolver: FileResolver;
+    copier: FileCopier;
+}
+declare class DeployServiceFactory {
+    constructor();
+    create(ctx: DeployContext): DeployServices;
+}
+
 declare class ArtifactDeployer {
     private git;
-    private resolver;
-    private copier;
-    constructor(git: GitClient, resolver: FileResolver, copier: FileCopier);
+    private services;
+    constructor(git: GitClient, services: DeployServiceFactory);
     run(ctx: DeployContext): Promise<void>;
 }
 
@@ -75,5 +70,6 @@ declare const DEFAULT_IGNORE: string[];
 declare function runArtifactDeploy(options: RunOptions): Promise<void>;
 
 declare function safeJoin(base: string, target: string): string;
+declare function normalizeRelativePath(baseDir: string, input: string): string;
 
-export { ArtifactDeployer, DEFAULT_IGNORE, type DeployContext, type DeployOptions, FileCopier, type FileCopierOptions, FileResolver, GitClient, type GitOptions, type RunOptions, createArtifactDeployer, runArtifactDeploy, safeJoin };
+export { ArtifactDeployer, DEFAULT_IGNORE, type DeployContext, type DeployOptions, DeployServiceFactory, type DeployServices, FileCopier, type FileCopierOptions, FileResolver, type GitOptions, type RunOptions, createArtifactDeployer, normalizeRelativePath, runArtifactDeploy, safeJoin };

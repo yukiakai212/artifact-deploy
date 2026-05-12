@@ -8,6 +8,7 @@
 
 * Deploy only specific files using glob patterns
 * Monorepo-friendly with `base-dir`
+* Support custom destination with `target-dir`
 * Fast with shallow clone
 * Custom commit message support
 
@@ -47,6 +48,7 @@ jobs:
           repo: your-username/target-repo
           token: ${{ secrets.GH_PAT }}
           base-dir: ./packages/abc
+          target-dir: web
           files: |
             dist/**
           commit-message: |
@@ -59,14 +61,15 @@ jobs:
 
 ## Inputs
 
-| Name             | Required | Default                    | Description                         |
-| ---------------- | -------- | -------------------------- | ----------------------------------- |
-| `repo`           | ✅        | —                          | Target repository (`user/repo`)     |
-| `branch`         | ❌        | `main`                     | Target branch                       |
-| `token`          | ✅        | —                          | GitHub token (PAT recommended)      |
-| `base-dir`       | ❌        | `.`                        | Base directory for resolving files  |
-| `files`          | ✅        | —                          | Glob patterns (multiline supported) |
-| `commit-message` | ❌        | `deploy: update artifacts` | Commit message                      |
+| Name             | Required | Default                    | Description                                    |
+| ---------------- | -------- | -------------------------- | ---------------------------------------------- |
+| `repo`           | yes     | —                          | Target repository (`user/repo`)                |
+| `branch`         |         | `main`                     | Target branch                                  |
+| `token`          | yes     | —                          | GitHub token (PAT recommended)                 |
+| `base-dir`       |         | `.`                        | Base directory for resolving files             |
+| `target-dir`     |         | `.`                        | Destination directory inside target repository |
+| `files`          | yes     | —                          | Glob patterns (multiline supported)            |
+| `commit-message` |         | `deploy: update artifacts` | Commit message                                 |
 
 ---
 
@@ -74,7 +77,7 @@ jobs:
 
 1. Clone target repository (shallow)
 2. Remove all tracked files (`git rm -rf .`)
-3. Copy matched files into repo
+3. Copy matched files into repo (under `target-dir`)
 4. Commit changes (if any)
 5. Push to target branch
 
@@ -84,6 +87,7 @@ jobs:
 
 ```yaml
 base-dir: ./packages/app
+target-dir: web
 files: |
   dist/**
 ```
@@ -97,11 +101,20 @@ This will copy:
 Into target repo as:
 
 ```
-dist/index.js
+web/dist/index.js
 ```
 
 > `base-dir` is stripped automatically.
+> `target-dir` is used as a prefix in the destination repository.
 
+---
+
+## Notes
+
+* `target-dir` must be a **relative path**
+* `target-dir` must not contain `..`
+* `.git` is always ignored and preserved
+* If no changes are detected, no commit will be created
 
 ---
 
@@ -138,3 +151,5 @@ commit-message: |
 ## License
 
 Yuki Akai - MIT
+
+---
