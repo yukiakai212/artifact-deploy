@@ -14,7 +14,7 @@ interface DeployOptions {
     token: string;
     branch: string;
     workspaceDir: string;
-    targetRepo: string;
+    targetRepository: string;
 }
 interface DeployContext {
     patterns: string[];
@@ -69,7 +69,4 @@ declare const DEFAULT_IGNORE: string[];
 
 declare function runArtifactDeploy(options: RunOptions): Promise<void>;
 
-declare function safeJoin(base: string, target: string): string;
-declare function normalizeRelativePath(baseDir: string, input: string): string;
-
-export { ArtifactDeployer, DEFAULT_IGNORE, type DeployContext, type DeployOptions, DeployServiceFactory, type DeployServices, FileCopier, type FileCopierOptions, FileResolver, type GitOptions, type RunOptions, createArtifactDeployer, normalizeRelativePath, runArtifactDeploy, safeJoin };
+export { ArtifactDeployer, DEFAULT_IGNORE, type DeployContext, type DeployOptions, DeployServiceFactory, type DeployServices, FileCopier, type FileCopierOptions, FileResolver, type GitOptions, type RunOptions, createArtifactDeployer, runArtifactDeploy };

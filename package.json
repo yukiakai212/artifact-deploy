@@ -64,6 +64,7 @@
     "@actions/core": "^3.0.0",
     "@actions/exec": "^3.0.0",
     "@yukiakai/actions-git": "^1.0.2",
+    "@yukiakai/path-extra": "^1.0.0",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.4"
   }
