@@ -10,6 +10,7 @@
     "format": "prettier --write **/*.{js,ts}",
     "format:check": "prettier --check **/*.{js,ts}",
     "lint": "eslint src/**/*.ts",
+	"typecheck:workspace": "tsc -p tsconfig.workspace.json",
     "build": "npx tsup",
     "docs": "npx typedoc",
     "release": "npm run build && git add ./dist/index.cjs",
