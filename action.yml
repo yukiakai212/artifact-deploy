@@ -3,6 +3,10 @@ description: "Deploy selected files (artifacts) to another GitHub repository"
 
 author: "yukiakai212"
 
+branding:
+  icon: upload-cloud
+  color: blue
+
 inputs:
   repo:
     description: "Target repository (user/repo)"
