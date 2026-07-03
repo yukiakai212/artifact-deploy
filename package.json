@@ -7,10 +7,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "npm run build && npx vitest run --reporter verbose --coverage",
-    "format": "prettier --write **/*.{js,ts}",
-    "format:check": "prettier --check **/*.{js,ts}",
+    "format": "prettier --write **/*.{js,ts,json}",
+    "format:check": "prettier --check **/*.{js,ts,json}",
     "lint": "eslint src/**/*.ts",
-	"typecheck:workspace": "tsc -p tsconfig.workspace.json",
+    "typecheck:workspace": "tsc -p tsconfig.workspace.json",
     "build": "npx tsup",
     "docs": "npx typedoc",
     "release": "npm run build && git add ./dist/index.cjs",
