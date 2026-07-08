@@ -1,19 +1,20 @@
 {
   "name": "artifact-deploy",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Deploy selected files (artifacts) to another GitHub repository — clean, simple, and reliable.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "npm run build && npx vitest run --reporter verbose --coverage",
+    "test": "echo npx vitest run --reporter verbose --coverage",
     "format": "prettier --write **/*.{js,ts,json}",
     "format:check": "prettier --check **/*.{js,ts,json}",
     "lint": "eslint src/**/*.ts",
     "typecheck:workspace": "tsc -p tsconfig.workspace.json",
     "build": "npx tsup",
+    "build:public": "npx tsup --config tsup.public.config.ts",
     "docs": "npx typedoc",
-    "release": "npm run build && git add ./dist/index.cjs",
+    "prepare:artifact": "tsx workspace/release/prepareArtifact.ts",
     "prepare": "is-ci || husky"
   },
   "files": [
@@ -49,6 +50,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.0.10",
     "@vitest/coverage-v8": "^4.0.15",
+    "@yukiakai/artifact": "^1.0.1",
     "dotenv": "^17.0.1",
     "eslint": "^9.30.0",
     "husky": "^9.1.7",
