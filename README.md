@@ -1,155 +1,108 @@
 # artifact-deploy
 
-> Deploy selected files (artifacts) to another GitHub repository — clean, simple, and reliable.
+Deploy selected artifact files to a GitHub repository, then commit and push the resulting change.
 
----
+## Quick start
 
-## Features
-
-* Deploy only specific files using glob patterns
-* Monorepo-friendly with `base-dir`
-* Support custom destination with `target-dir`
-* Fast with shallow clone
-* Custom commit message support
-
----
-
-## Use Case
-
-* Publish `dist/` without exposing source code
-* Deploy build artifacts to a separate repo
-* Maintain a clean artifact repository
-* CI/CD pipelines for static assets or docs
-
----
-
-## Usage
-
-```yaml
-name: Deploy
+~~~yaml
+name: Deploy artifacts
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build
         run: npm run build
 
-      - name: Deploy artifacts
-        uses: yukiakai212/artifact-deploy@v1
+      - name: Deploy artifact
+        uses: yukiakai212/artifact-deploy@v6
         with:
-          repo: your-username/target-repo
-          token: ${{ secrets.GH_PAT }}
-          base-dir: ./packages/abc
-          target-dir: web
-          files: |
+          source-directory: .
+          source-patterns: |
             dist/**
-          commit-message: |
-            deploy: build artifacts
-
-            source: ${{ github.repository }}@${{ github.sha }}
-```
-
----
+          target-repository: your-account/your-artifact-repository
+          target-directory: .
+          branch: main
+          token: ${{ secrets.GH_PAT }}
+          replace-target-directory: true
+          commit-message: "deploy: update artifacts"
+~~~
 
 ## Inputs
 
-| Name             | Required | Default                    | Description                                    |
-| ---------------- | -------- | -------------------------- | ---------------------------------------------- |
-| `repo`           | yes     | —                          | Target repository (`user/repo`)                |
-| `branch`         |         | `main`                     | Target branch                                  |
-| `token`          | yes     | —                          | GitHub token (PAT recommended)                 |
-| `base-dir`       |         | `.`                        | Base directory for resolving files             |
-| `target-dir`     |         | `.`                        | Destination directory inside target repository |
-| `files`          | yes     | —                          | Glob patterns (multiline supported)            |
-| `commit-message` |         | `deploy: update artifacts` | Commit message                                 |
+| Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| <code>source-directory</code> | no | <code>.</code> | Artifact source root, relative to <code>GITHUB_WORKSPACE</code>. |
+| <code>source-patterns</code> | yes | - | Newline-delimited glob patterns selecting source files. |
+| <code>target-repository</code> | yes | - | GitHub.com repository reference (<code>owner/repository</code>) or GitHub URL that receives the artifact. |
+| <code>target-directory</code> | no | <code>.</code> | Destination directory inside the target repository. |
+| <code>branch</code> | yes | - | Target repository branch to prepare and push. |
+| <code>token</code> | yes | - | Token with write access to the target repository. |
+| <code>replace-target-directory</code> | no | <code>true</code> | Delete existing destination content before copying the artifact. |
+| <code>commit-message</code> | no | <code>deploy: update artifacts</code> | Commit message used when the deployment changes the target repository. |
 
----
+## Path behavior
 
-## How It Works
+Patterns are resolved from <code>source-directory</code>, and that directory is not included in the destination path.
 
-1. Clone target repository (shallow)
-2. Remove all tracked files (`git rm -rf .`)
-3. Copy matched files into repo (under `target-dir`)
-4. Commit changes (if any)
-5. Push to target branch
-
----
-
-## Path Behavior (Monorepo Friendly)
-
-```yaml
-base-dir: ./packages/app
-target-dir: web
-files: |
+~~~yaml
+source-directory: packages/site
+source-patterns: |
   dist/**
-```
+target-directory: web
+~~~
 
-This will copy:
+For example, <code>packages/site/dist/index.html</code> is deployed as
+<code>web/dist/index.html</code> in the target repository.
 
-```
-./packages/app/dist/index.js
-```
+## Replacement behavior
 
-Into target repo as:
+By default, <code>replace-target-directory</code> is <code>true</code>. The action removes the existing contents of <code>target-directory</code>, then copies the selected artifact files into it. Use this when the destination is owned entirely by the deployment.
 
-```
-web/dist/index.js
-```
+Set it to <code>false</code> to overlay selected files and leave existing, unselected files in place:
 
-> `base-dir` is stripped automatically.
-> `target-dir` is used as a prefix in the destination repository.
+~~~yaml
+replace-target-directory: false
+~~~
 
----
+Be especially deliberate when <code>target-directory</code> is <code>.</code>: replacement then applies to the target repository root.
 
-## Notes
+## Safety and failure behavior
 
-* `target-dir` must be a **relative path**
-* `target-dir` must not contain `..`
-* `.git` is always ignored and preserved
-* If no changes are detected, no commit will be created
-
----
+- The action resolves source and target paths inside their respective workspace or repository roots.
+- <code>.git</code> is always ignored while collecting source files.
+- A matched symbolic link causes the deployment to fail.
+- If the patterns select no deployable files, the deployment fails before the target repository is prepared or changed.
+- If copying produces no Git changes, the action does not create an empty commit.
 
 ## Authentication
 
-Use a Personal Access Token (PAT):
+Use a token that can write to <code>target-repository</code>:
 
-```yaml
+~~~yaml
 token: ${{ secrets.GH_PAT }}
-```
+~~~
 
-Make sure it has `repo` permissions.
+When deploying to a different repository, the workflow <code>GITHUB_TOKEN</code> usually cannot write there. A fine-grained personal access token or GitHub App token with repository contents write access is appropriate.
 
----
+## Concurrency
 
-## Best Practices
+Serialize deployments that write to the same target branch so two runs cannot overwrite each other:
 
-### Use meaningful commit messages
-
-```yaml
-commit-message: |
-  deploy: web build
-
-  source: ${{ github.repository }}@${{ github.sha }}
-```
-
-### Keep artifact repo separate
-
-* Avoid mixing source and build output
-* Keep repo lightweight and clean
-
----
+~~~yaml
+concurrency:
+  group: deploy-artifact-${{ github.repository }}-main
+  cancel-in-progress: false
+~~~
 
 ## License
 
-Yuki Akai - MIT
-
----
+MIT (c) Yuki Akai

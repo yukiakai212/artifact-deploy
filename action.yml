@@ -1,44 +1,49 @@
-name: "artifact-deploy"
-description: "Deploy selected files (artifacts) to another GitHub repository"
+name: 'artifact-deploy'
+description: 'Deploy selected artifact files to a GitHub repository.'
 
-author: "yukiakai212"
+author: 'yukiakai212'
 
 branding:
   icon: upload-cloud
   color: blue
 
 inputs:
-  repo:
-    description: "Target repository (user/repo)"
+  source-directory:
+    description: 'Directory containing artifact source files, relative to the GitHub workspace.'
+    required: false
+    default: '.'
+
+  source-patterns:
+    description: 'Newline-delimited glob patterns that select source files.'
     required: true
+
+  target-repository:
+    description: 'GitHub.com repository reference or URL that receives the artifact.'
+    required: true
+
+  target-directory:
+    description: 'Directory in the target repository to receive the artifact.'
+    required: false
+    default: '.'
 
   branch:
-    description: "Target branch"
-    required: false
-    default: "main"
+    description: 'Target repository branch to prepare and push.'
+    required: true
 
   token:
-    description: "GitHub token (PAT recommended)"
+    description: 'Token with write access to the target repository.'
     required: true
 
-  base-dir:
-    description: "Base directory for resolving files"
+  replace-target-directory:
+    description: 'Delete existing target-directory content before copying the artifact.'
     required: false
-    default: "."
-  target-dir:
-    description: "Target directory in destination  repo"
-    required: false
-    default: "."
-
-  files:
-    description: "Glob patterns (multiline supported)"
-    required: true
+    default: 'true'
 
   commit-message:
-    description: "Commit message"
+    description: 'Commit message used when deployment changes the target repository.'
     required: false
-    default: "deploy: update artifacts"
+    default: 'deploy: update artifacts'
 
 runs:
-  using: "node24"
-  main: "dist/action.cjs"
+  using: 'node24'
+  main: 'dist/action.cjs'
