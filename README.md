@@ -25,9 +25,7 @@ jobs:
       - name: Deploy artifact
         uses: yukiakai212/artifact-deploy@v6
         with:
-          source-directory: .
-          source-patterns: |
-            dist/**
+          source-directory: dist
           target-repository: your-account/your-artifact-repository
           target-directory: .
           branch: main
@@ -40,8 +38,8 @@ jobs:
 
 | Name | Required | Default | Description |
 | --- | --- | --- | --- |
-| <code>source-directory</code> | no | <code>.</code> | Artifact source root, relative to <code>GITHUB_WORKSPACE</code>. |
-| <code>source-patterns</code> | yes | - | Newline-delimited glob patterns selecting source files. |
+| <code>source-directory</code> | yes | - | Artifact source root, relative to <code>GITHUB_WORKSPACE</code>. |
+| <code>source-patterns</code> | no | <code>**</code> | Optional newline-delimited glob patterns that filter source files. |
 | <code>target-repository</code> | yes | - | GitHub.com repository reference (<code>owner/repository</code>) or GitHub URL that receives the artifact. |
 | <code>target-directory</code> | no | <code>.</code> | Destination directory inside the target repository. |
 | <code>branch</code> | yes | - | Target repository branch to prepare and push. |
@@ -50,6 +48,8 @@ jobs:
 | <code>commit-message</code> | no | <code>deploy: update artifacts</code> | Commit message used when the deployment changes the target repository. |
 
 ## Path behavior
+
+The action selects every file below <code>source-directory</code> by default, using the pattern <code>**</code>. Provide <code>source-patterns</code> only when the artifact needs additional filtering.
 
 Patterns are resolved from <code>source-directory</code>, and that directory is not included in the destination path.
 

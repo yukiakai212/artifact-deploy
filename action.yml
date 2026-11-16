@@ -10,12 +10,12 @@ branding:
 inputs:
   source-directory:
     description: 'Directory containing artifact source files, relative to the GitHub workspace.'
-    required: false
-    default: '.'
+    required: true
 
   source-patterns:
-    description: 'Newline-delimited glob patterns that select source files.'
-    required: true
+    description: 'Optional newline-delimited glob patterns that select source files.'
+    required: false
+    default: '**'
 
   target-repository:
     description: 'GitHub.com repository reference or URL that receives the artifact.'
